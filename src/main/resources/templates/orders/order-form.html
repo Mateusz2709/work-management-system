@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Add Order</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { background-color: #343a40; min-height: 100vh; padding-top: 20px; }
+        .sidebar a { display: block; color: #fff; padding: 12px 20px; text-decoration: none; border-radius: 8px; margin: 4px 10px; transition: background-color .2s; }
+        .sidebar a:hover { background-color: #495057; }
+        .active-link { background-color: #0d6efd; }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 sidebar" aria-label="Sidebar">
+            <h4 class="text-light text-center mb-4">Menu</h4>
+            <a th:href="@{/home/showFormForAddEmployee}">➕ Add Employee</a>
+            <a th:href="@{/home/showFormForAddOrder}" class="active-link">➕ Add Order</a>
+            <a th:href="@{/home/employees}">👀 View Employees</a>
+            <a th:href="@{/home/orders}">📦 View Orders</a>
+            <a th:href="@{/home/showFormForWorkLog}">🕒 Add Work Log</a>
+        </nav>
+
+        <main class="col-md-9 col-lg-10 py-4">
+            <div class="container">
+                <h2 class="text-center mb-4">Add Order</h2>
+
+                <!-- Success message (flash) -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${successMessage}">Saved!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+
+
+                <form th:action="@{/home/saveOrder}" th:object="${order}" method="post" class="mx-auto" style="max-width: 640px;">
+
+                    <div class="mb-3">
+                        <label for="orderName" class="form-label">Order Name</label>
+                        <input id="orderName" type="text" class="form-control" th:field="*{orderName}" required />
+                        <div class="text-danger mt-1" th:if="${#fields.hasErrors('orderName')}" th:errors="*{orderName}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="orderNumber" class="form-label">Order Number</label>
+                        <input id="orderNumber" type="text" class="form-control" th:field="*{orderNumber}" required />
+                        <div class="text-danger mt-1" th:if="${#fields.hasErrors('orderNumber')}" th:errors="*{orderNumber}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="expectedMinutes" class="form-label">Expected Time (minutes)</label>
+                        <input id="expectedMinutes" type="number" class="form-control" th:field="*{expectedMinutes}" min="1" required />
+                        <div class="text-danger mt-1" th:if="${#fields.hasErrors('expectedMinutes')}" th:errors="*{expectedMinutes}"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="totalQuantity" class="form-label">Total Quantity</label>
+                        <input id="totalQuantity" type="number" class="form-control" th:field="*{totalQuantity}" min="1" required />
+                        <div class="text-danger mt-1" th:if="${#fields.hasErrors('totalQuantity')}" th:errors="*{totalQuantity}"></div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

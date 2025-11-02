@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Orders</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { background-color: #343a40; min-height: 100vh; padding-top: 20px; }
+        .sidebar a {
+          display: block; color: #ffffff; padding: 12px 20px;
+          text-decoration: none; border-radius: 8px; margin: 4px 10px;
+          transition: background-color 0.2s;
+        }
+        .sidebar a:hover { background-color: #495057; }
+        .active-link { background-color: #007bff; }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4 class="text-light text-center mb-4">Menu</h4>
+            <a th:href="@{/home/showFormForAddEmployee}" class="active-link">➕ Add Employee</a>
+            <a th:href="@{/home/showFormForAddOrder}">➕ Add Order</a>
+            <a th:href="@{/home/employees}">👀 View Employees</a>
+            <a th:href="@{/home/orders}">📦 View Orders</a>
+            <a th:href="@{/home/showFormForWorkLog}">🕒 Add Work Log</a>
+        </div>
+
+
+        <!-- Main content -->
+        <div class="col-md-9 col-lg-10 py-4">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">Customer Orders</h2>
+                    <a class="btn btn-primary" th:href="@{/home/showFormForAddOrder}">➕ Add Order</a>
+                </div>
+
+                <form th:action="@{/home/orders}" method="get" class="d-flex align-items-center gap-2 mb-3">
+                    <label for="statusFilter" class="form-label mb-0">Filter by Status:</label>
+                    <select id="statusFilter" name="status" class="form-select" style="width: 180px;">
+                        <option value="">All</option>
+                        <option value="PENDING" th:selected="${param.status == 'PENDING'}">Pending</option>
+                        <option value="COMPLETED" th:selected="${param.status == 'COMPLETED'}">Completed</option>
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">Filter</button>
+                    <a th:href="@{/home/orders}" class="btn btn-outline-secondary">Clear</a>
+                </form>
+
+
+
+                <!-- Success message -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                    <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${orders == null or #lists.isEmpty(orders)}" class="alert alert-info mt-3">
+                    No orders found.
+                </div>
+
+                <!-- Table -->
+                <div th:if="${orders != null and !#lists.isEmpty(orders)}" class="card mt-3">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0 align-middle">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Order Name</th>
+                                    <th>Order Number</th>
+                                    <th>Completed/Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td th:text="${order.orderName}"></td>
+                                    <td th:text="${order.orderNumber}"></td>
+                                    <td th:text="${order.completedQuantity + ' / ' + order.totalQuantity}"></td>
+                                    <td th:text="${order.status}"></td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-2">
+
+                                            <form th:action="@{/home/deleteOrder}" method="post"
+                                                  onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                                <input type="hidden" name="orderId" th:value="${order.id}">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

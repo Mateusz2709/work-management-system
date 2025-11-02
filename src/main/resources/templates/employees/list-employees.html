@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Employees</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .sidebar { background-color: #343a40; min-height: 100vh; padding-top: 20px; }
+    .sidebar a {
+      display: block; color: #ffffff; padding: 12px 20px;
+      text-decoration: none; border-radius: 8px; margin: 4px 10px;
+      transition: background-color 0.2s;
+    }
+    .sidebar a:hover { background-color: #495057; }
+    .active-link { background-color: #007bff; }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 sidebar">
+      <h4 class="text-light text-center mb-4">Menu</h4>
+      <a th:href="@{/home/showFormForAddEmployee}" class="active-link">➕ Add Employee</a>
+      <a th:href="@{/home/showFormForAddOrder}">➕ Add Order</a>
+      <a th:href="@{/home/employees}">👀 View Employees</a>
+      <a th:href="@{/home/orders}">📦 View Orders</a>
+      <a th:href="@{/home/showFormForWorkLog}">🕒 Add Work Log</a>
+    </div>
+
+    <!-- Main content -->
+    <div class="col-md-9 col-lg-10 py-4">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="mb-0">Employees</h2>
+          <a class="btn btn-primary" th:href="@{/home/showFormForAddEmployee}">➕ Add Employee</a>
+        </div>
+
+        <!-- Success message -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+          <span th:text="${successMessage}"></span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${employees == null or #lists.isEmpty(employees)}" class="alert alert-info mt-3">
+          No employees found. Why not <a th:href="@{/home/showFormForAddEmployee}" class="alert-link">add one</a>?
+        </div>
+
+        <!-- Table -->
+        <div th:if="${employees != null and !#lists.isEmpty(employees)}" class="card mt-3">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped mb-0 align-middle">
+                <thead class="table-light">
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Target</th>
+                  <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="emp : ${employees}">
+                  <td th:text="${emp.firstName}"></td>
+                  <td th:text="${emp.lastName}"></td>
+                  <td th:text="${emp.target}"></td>
+                  <td>
+                    <div class="d-flex flex-wrap gap-2">
+                      <a th:href="@{/home/employee/{id}(id=${emp.id})}"
+                         class="btn btn-sm btn-outline-secondary">View</a>
+
+                      <a class="btn btn-sm btn-outline-primary"
+                         th:href="@{'/home/showFormForUpdateEmployee'(employeeId=${emp.id})}">Edit</a>
+
+                      <form th:action="@{/home/deleteEmployee}" method="post"
+                            onsubmit="return confirm('Are you sure you want to delete this employee?');">
+                        <input type="hidden" name="employeeId" th:value="${emp.id}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                      </form>
+
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
